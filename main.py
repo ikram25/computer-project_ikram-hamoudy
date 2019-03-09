@@ -1,237 +1,232 @@
+def funa(x, Y, dY):
+    xY_avg = 0
+    sum_dY = 0
+    for i in range(0, len(x)):
+        xY_avg = xY_avg + x[i] * Y[i] / dY[i] ** 2
+        sum_dY = sum_dY + 1 / dY[i] ** 2
+    xY_avg = xY_avg / sum_dY
+    x_avg = 0
+    x_avg_sq = 0
+    for i in range(0, len(x)):
+        x_avg = x_avg + x[i] / dY[i] ** 2
+        x_avg_sq = x_avg_sq + x[i] ** 2 / dY[i] ** 2
+    x_avg = x_avg / sum_dY
+    x_avg_sq = x_avg_sq / sum_dY
+    Y_avg = 0
+    for i in range(0, len(Y)):
+        Y_avg = Y_avg + Y[i] / dY[i] ** 2
+    Y_avg = Y_avg / sum_dY
+
+    return (xY_avg - x_avg * Y_avg) / (x_avg_sq - x_avg ** 2)
+
+
+def funda(x, dY):
+    dY_avg_sq = 0
+    sum_dY = 0
+    sum1 = 0
+    for i in range(0, len(dY)):
+        dY_avg_sq = dY_avg_sq + dY[i] ** 2 / dY[i] ** 2
+        sum_dY = sum_dY + 1 / dY[i] ** 2
+        sum1 = sum1 + 1
+    dY_avg_sq = dY_avg_sq / sum_dY
+    x_avg = 0
+    x_avg_sq = 0
+    for i in range(0, len(x)):
+        x_avg = x_avg + x[i] / dY[i] ** 2
+        x_avg_power = x_avg_sq + x[i] ** 2 / dY[i] ** 2
+    x_avg = x_avg / sum_dY
+    x_avg_sq = x_avg_sq / sum_dY
+
+    return (dY_avg_sq / (count * (x_avg_sq - x_avg ** 2))) ** 0.5
+
+
+def funb(Y,a,x,dY,):
+    sum_dY = 0
+    Y_avg = 0
+    for i in range(0, len(Y)):
+        Y_avg = Y_avg + Y[i] / dY[i] ** 2
+        sum_dY = sum_dY + 1 / dY[i] ** 2
+    Y_avg = Y_avg / sum_dY
+    x_avg = 0
+    for i in range(0, len(x)):
+        x_avg = x_avg + x[i] / dY[i] ** 2
+    x_avg = x_avg / sum_dY
+
+    return Y_avg - a * x_avg
+
+
+def fundb(x, dY):
+    dY_avg_sq = 0
+    sum_dY = 0
+    sum1 = 0
+    for i in range(0, len(dY)):
+        dY_avg_sq = dY_avg_sq + dY[i] ** 2 / dY[i] ** 2
+        sum_dY = sum_dY + 1 / dY[i] ** 2
+        sum1 = sum1 + 1
+    dY_avg_sq = dY_avg_sq / sum_dY
+    x_avg = 0
+    x_avg_sq = 0
+    for i in range(0, len(x)):
+        x_avg = x_avg + x[i] / dY[i] ** 2
+        x_avg_sq = x_avg_sq + x[i] ** 2 / dY[i] ** 2
+    x_avg = x_avg / sum_dY
+    x_avg_sq = x_avg_sq / sum_dY
+
+    return (dY_avg_sq * x_avg_sq / (count * (x_avg_sq - x_avg** 2))) ** 0.5
+
+def funchi2red(chi, x):
+    sum1 = 0
+    for i in range(0, len(x)):
+        sum1 = sum1 + 1
+    return chi / (sum1 - 2)
+
+
+def funchi2(Y,a,b,x,dY):
+    Chi2 = 0
+    for i in range(0, len(x)):
+        Chi2 = Chi2 + ((Y[i] - (a * x[i] + b)) / dY[i]) ** 2
+    return Chi2
+
+
+def check_rows(data):
+    for x in data:
+        if not ('axis' or 'axis') in x:
+            datalist = x.split(' ')
+            a = datalist[0].lower()
+            datalist.pop(0)
+            if a == 'x':
+                x_data = list(map(float, line_data_list))
+            elif a == 'Y':
+                Y_data = list(map(float, line_data_list))
+            elif a == 'dx':
+                dx_data = list(map(float, line_data_list))
+            elif a == 'dY':
+                dY_data = list(map(float, line_data_list))
+
+    if len(x_data) != len(Y_data) and len(x_data) != len(dY_data) \
+        and len(x_data) != len(dx_data) and len(Y_data) != len(dx_data) \
+        and len(Y_data) != len(dY_data) and len(dY_data) \
+        != len(dx_data):
+        print ('Input file error: Data lists are not the same length')
+        exit()
+    for i in dx_data:
+        if i <= 0:
+            print ('Input file error: Not all uncertainties are positive.')
+            exit()
+    for i in dY_data:
+        if i <= 0:
+            print ('Input file error: Not all uncertainties are positive.')
+            exit()
+    return (x_data, Y_data, dx_data, dY_data)
+
+
+def check_column(data):
+    cheked = []
+
+    for i in data[:len(data) - 4]:
+        a = i.strip('\n').lower().split()
+        cheked.append(a)
+    column = len(cheked[0])
+    length = len(cheked)
+    my_data = []
+    for t in range(column):
+        list1 = []
+        for i in range(length):
+            try:
+                list1.append(cheked[i][t])
+            except Exception as e:
+                pass
+        my_data.append(list1)
+
+    for item in my_data:
+        b = item[0]
+        if b == 'x':
+            x = list(map(float, item[1:]))
+        elif b == 'Y':
+            Y = list(map(float, item[1:]))
+        elif b == 'dx':
+            Dx = list(map(float, item[1:]))
+        elif b == 'dY':
+            dY = list(map(float, item[1:]))
+
+    if len(x) != len(Y) and len(x) != len(dY) or len(x) != len(Dx) and len(Y) != len(Dx) or len(Y) != len(dY) and len(dY) != len(Dx):
+        print ('Input file error: Data lists are not the same length')
+        exit()
+    for k in Dx:
+        if k <= 0:
+            print ('Input file error: Not all uncertainties are positive.')
+            exit()
+    for k in dY:
+        if k <= 0:
+            print ('Input file error: Not all uncertainties are positive.')
+            exit()
+    
+    return (x, Y, Dx, dY)
+
+
 import matplotlib.pyplot as plt
 import numpy as np
 
-def fit_linear(filename):   #part 1
-   def chick_row (data):
-    for itam in data[0:len(data)-2]:
-        chicked = item.strip("\n").lower().split()
-        xx = chicked[0]
-        if xx =="x":
-            x= list(map(float,chiched[1:]))
-        elif xx== "Y":
-            Y= list(map(float,chicked[1:]))
-        elif xx =="Dx":
-            Dx = list (map(float,chicked[1:]))
-        elif xx = "dY":
-            dY = list(map(float,chicked[1:]))
-    if len(x) != len(Y) or len(x) != len(dY) or len(x) != len(Dx):
-        print("“Input file error: Data lists are not the same length")
-        exit()
-    for check2 in Dx:
-         if check2 <=0:
-            print ("Input file error: Not all uncertainties are positive.")
-            exit()
-    for check2 in dY:
-         if check2 <=0:
-            print ("Input file error: Not all uncertainties are positive.")
-            exit()
-    return (x,Y,Dx,dY)
 
-def column(data):
-    checked_data=[]
-    for item in data [:len(data)-2]:
-        checked = item.strip('\n').lower().split()
-        checked_data.append(checken)
-    column= len(checked_data[0])
-    row= len(checked_data)
-    data_che=[]
-    try:
-        for k in range (column):
-            lis=[]
-            for i in range (row):
-                lis.append(checked_data[i][k])
-            data_che.append(lis)
-    except:
-        print("not the same length.")
-        exit()
-    for z in data_che :
-        xx= z[0]
-        if xx == "x":
-             x = list(map(float, chiched[1:]))
-        elif xx == "Y":
-             Y = list(map(float, chicked[1:]))
-        elif xx == "Dx":
-             Dx = list(map(float, chicked[1:]))
-        elif xx = "dY":
-             dY = list(map(float, chicked[1:]))
-    for check2 in Dx:
-         if check2 <=0:
-            print ("Input file error: Not all uncertainties are positive.")
-            exit()
-    for check2 in dY:
-         if check2 <=0:
-            print ("Input file error: Not all uncertainties are positive.")
-            exit()
-    return (x,Y,Dx,dY)
+def fit_linear(filename):
+    my_file = open(filename)
+    data = my_file.read()
+    data = data.split('\n')
 
-data_file="all data.txt"
-file=open(data_file)
-data = file.readline()
-x_list = ['x','Y','Dx' ,'dY']
-su=0
-y_title= data[len(data)-1].strip("Y title")
-x_title= data[len(data)-1].strip("x title")
-for item in x_list :
-    if item in data[0]:
-         su=su+1
-if su==4:
-    k =input_column(data)
-else:
-    input_chick_row (data)
-print (k)
+    mydata = data[0]
+    datalist = mydata.split(' ')
+    sum1 = len(datalist)
 
+    for z in data:
+        if 'x axis' in z:
+            xlabel = z.split(":")[1]
+        if 'y axis' in z:
+            ylabel = z.split(":")[1]
 
+    if sum1 == 4:
+        (x, Y, Dx, dY) = check_column(data)
+        a = funa(x, Y, dY)
+        b = funb(Y, a, x, dY)
+        chi = funchi2(Y, a, b, x, dY)
+        print ('a=', funa(x, Y, dY), '+-', funda(x, dY))
+        print ('b=', funb(Y, a, x, dY), '+-', fundb(x, dY))
+        print ('chi2=', funchi2(Y, a, b, x, dY))
+        print ('chi2_reduced=', funchi2red(chi, x))
+        xx = np.array(x)
+        YY = np.array(Y)
+        lin = a * xx + b
+        xarray = np.array(Dx)
+        Yarray = np.array(dY)
 
+        y = lin
+        plt.errorbar(xx,YY,Yarray,xarray,fmt='none',ecolor='b')
+        plt.plot(xx, Y, 'r')
+        plt.xlabel(xlabel)
+        plt.Ylabel(Ylabel)
+        plt.show()
+        plt.savefig('linear_fit.svg')
+        my_file.close()
+    else:
 
+        (x, Y, Dx, dY) = check_rows(data)
+        a = funa(x, Y, dY)
+        b = funb(Y, a, x, dY)
+        chi = funchi2(Y, a, b, x, dY)
+        print ('a=', funa(x, Y, dY), '+-', funda(x, dY))
+        print ('b=', funb(Y, a, x, dY), '+-', fundb(x, dY))
+        print ('chi2=', funchi2(Y, a, b, x, dY))
+        print ('chi2_reduced=', funchi2red(chi, x))
+        xx = np.array(x)
+        YY = np.array(Y)
+        lin = a * xx + b
+        xarray = np.array(Dx)
+        Yarray = np.array(dY)
 
-
-def function_a(x,Y,dY):  #part 2
-    xyavg=0
-    sumdy=0
-    for i in range(0,len(x)):
-        xyavg=xyavg+(x[i]*Y[i])/(dY[i]**2)
-        sumdy=sumdy+(1/(dY[i]**2))
-    xyavg=xyavg/(sumdy)
-    xavg=0
-    xavgpow = 0
-    for i in range(0,len(x)):
-        xavg=xavg+(x[i]/(dY[i]**2))
-        xavgpow = xavgpow+(x[i]**2/(dY[i]**2))
-    xavg=xavg/(sumdy)
-    xavgpow=xavgpow/(sumdy)
-    yavg=0
-    for i in range(0,len(Y)):
-        yavg=yavg+(Y[i]/(dY[i]**2))
-    yavg=yavg/(sumdy)
-
-    return ((xyavg-(xavg*yavg))/(xavgpow-(xavg**2)))
-def function_da(x,dY):
-    dyavgpow=0
-    sumdy = 0
-    K=0
-    for i in range(0,len(dY)):
-        dyavgpow=dyavgpow+((dY[i] ** 2)/dY[i] ** 2)
-        sumdy=sumdy+(1/(dY[i]**2))
-        K=K+1
-    dy_power_avarage = dyavgpow / (sumdy)
-    xavg = 0
-    xavgpow = 0
-    for i in range(0, len(x)):
-        xavg = xavg + (x[i] / (dY[i] ** 2))
-        xavgpow = xavgpow + (x[i] ** 2 / (dY[i] ** 2))
-    xavg = xavg / (sumdy)
-    xavgpow = xavgpow /(sumdy)
-
-    return ((dyavgpow/(K*(xavgpow-(xavg**2)))))**(0.5)
-def function_b(Y,a,x,dY):
-    sumdy = 0
-    yavg=0
-    for i in range(0,len(Y)):
-        yavg=yavg+(Y[i]/(dY[i]**2))
-        sumdy = sumdy + (1 / (dY[i] ** 2))
-    yavg=yavg/(sumdy)
-    xavg = 0
-    for i in range(0, len(x)):
-        xavg = xavg + (x[i] / (dY[i] ** 2))
-    xavg = xavg / (sumdy)
-
-    return yavg-a*xavg
-def function_db(x,dY):
-    dyavgpow = 0
-    sumdy = 0
-    K = 0
-    for i in range(0, len(dY)):
-        dyavgpow = dyavgpow + ((dY[i] ** 2) / dY[i] ** 2)
-        sumdy = sumdy + (1 / (dY[i] ** 2))
-        K = K+ 1
-    dyavgpow = dyavgpow / (sumdy)
-    xavg = 0
-    xavgpow = 0
-    for i in range(0, len(x)):
-        xavg = xavg + (x[i] / (dY[i] ** 2))
-        xavgpow = xavgpow + (x[i] ** 2 / (dY[i] ** 2))
-    xavg = xavg / (sumdy)
-    xavgpow = xavgpow / (sumdy)
-
-    return ((dyavgpow)*(xavgpow) / (K * (xavgpow - (xavg ** 2))))**(0.5)
-def function_chi2red(chi,x):
-    K=0
-    for i in range(0,len(x)):
-        K=K+1
-    return chi/(K-2)
-
-
-def function_chi2(Y,a,b,x,dY):
-    Chi2=0
-    for i in range(0,len(x)):
-        Chi2=Chi2+((Y[i]-(a*x[i]+b))/(dY[i]))**2
-    return Chi2
-a=function_a(x,Y,dY)
-b=function_b(Y,a,x,dY)
-chi=function_chi2(Y,a,b,x,dY)
-print(function_a(x,Y,dY))
-print(function_da(x,dY))
-print(function_b(Y,a,x,dY))
-print(function_db(x,dY))
-print(function_chi2(Y,a,b,x,dY))
-print(function_chi2red(chi,x))
-
-
-
-
-print("a=", function_a, "+-", function_da)  #part 3
-print("b=", function_b, "+-", function_db)
-print("chi2=", function_chi2)
-print("chi2_reduced=", function_chi2_reduced)
-
-
-
-
-def the_name_of_lables(axis_titles):   #part 4
-    x_title = ''
-    y_title = ''
-
-    for item in axis_titles:
-        for i in range(len(axis_titles)):
-
-            item = item.lower().strip()
-            if item.startswith('x axis:'):
-                x_title= axis_titles[i][6:].strip()
-            if line.startswith('y axis:'):
-                y_title= axis_titles[i][6:].strip()
-    return x_title, y_title
-    
-    
-    
-import matplotlip.pyplot as plt
-from numy imprort np
-x = np.array(X)  #row
-my_y = np.array(Y)
-formula = a * x + b
-xe = np.array(DX)
-ye = np.array(DY)
-y = formula
-plt.errorbar(x, my_y, ye=ye, xe=xe, fmt='none', ecolor='b')
-plt.plot(x, y, "r")
-plt.xlabel(xlabel=Xlable)
-plt.ylabel(ylabel=Ylable)
-plt.show()
-plt.savefig("linear_fit.svg")
-my_file.close()
-
-
-x = np.array(X)#column
-my_y = np.array(Y)
-formula = a * x + b
-xe = np.array(DX)
-ye = np.array(DY)
-
-y = formula
-plt.errorbar(x, my_y, ye=ye, xe=xe, fmt='none', ecolor='b')
-plt.plot(x, y, "r")
-plt.xlabel(xlabel=Xlable)
-plt.ylabel(ylabel=Ylable)
-plt.show()
-plt.savefig("linear_fit.svg")
-my_file.close()
-    
+        y = lin
+        plt.errorbar(xx,YY,Yarray,xarray,fmt='none',ecolor='b',)
+        plt.plot(xx, Y, 'r')
+        plt.xlabel(xlabel)
+        plt.Ylabel(Ylabel)
+        plt.show()
+        plt.savefig('linear_fit.svg')
+        my_file.close()
